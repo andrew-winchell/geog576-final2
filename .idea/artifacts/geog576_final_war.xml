@@ -1,0 +1,14 @@
+<component name="ArtifactManager">
+  <artifact type="war" name="geog576-final:war">
+    <output-path>$PROJECT_DIR$/target</output-path>
+    <properties id="maven-jee-properties">
+      <options>
+        <module>geog576-final</module>
+        <packaging>war</packaging>
+      </options>
+    </properties>
+    <root id="archive" name="geog576-final-1.0-SNAPSHOT.war">
+      <element id="artifact" artifact-name="geog576-final:war exploded" />
+    </root>
+  </artifact>
+</component>
