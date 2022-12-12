@@ -9,15 +9,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f003fde1-6c59-49eb-89cc-61f96e631a95" name="Changes" comment="web app setup">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/org/webproject/geog576final/HttpServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/webproject/geog576final/HttpServlet.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/RunQuery.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/RunQuery.jsp" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/main.js" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/lib/java-json.jar" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/java-json.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/lib/postgis-jdbc-2021.1.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/postgis-jdbc-2021.1.0.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/lib/postgresql-42.5.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/postgresql-42.5.0.jar" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/lib/tab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/lib/tab.js" afterDir="false" />
+    <list default="true" id="f003fde1-6c59-49eb-89cc-61f96e631a95" name="Changes" comment="Successful connection to weather_event table in Heroku Postgres. Insert new event into weather_event table.">
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/RunQuery.jsp" beforeDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -160,7 +153,7 @@
       <workItem from="1670302821389" duration="71728000" />
       <workItem from="1670729722736" duration="14233000" />
       <workItem from="1670806078822" duration="7690000" />
-      <workItem from="1670813952848" duration="7120000" />
+      <workItem from="1670813952848" duration="7472000" />
     </task>
     <task id="LOCAL-00001" summary="web app setup">
       <created>1670794830420</created>
@@ -190,7 +183,14 @@
       <option name="project" value="LOCAL" />
       <updated>1670812664491</updated>
     </task>
-    <option name="localTasksCounter" value="5" />
+    <task id="LOCAL-00005" summary="Successful connection to weather_event table in Heroku Postgres. Insert new event into weather_event table.">
+      <created>1670822515426</created>
+      <option name="number" value="00005" />
+      <option name="presentableId" value="LOCAL-00005" />
+      <option name="project" value="LOCAL" />
+      <updated>1670822515426</updated>
+    </task>
+    <option name="localTasksCounter" value="6" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -209,7 +209,8 @@
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="web app setup" />
-    <option name="LAST_COMMIT_MESSAGE" value="web app setup" />
+    <MESSAGE value="Successful connection to weather_event table in Heroku Postgres. Insert new event into weather_event table." />
+    <option name="LAST_COMMIT_MESSAGE" value="Successful connection to weather_event table in Heroku Postgres. Insert new event into weather_event table." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
