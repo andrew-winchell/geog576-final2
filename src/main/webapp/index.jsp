@@ -1,9 +1,9 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<!DOCTYPE html>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1" %>
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
 <html>
 <html lang="en">
 <head>
-    <meta charset="urf-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>SITREP Creator</title>
 
@@ -25,6 +25,24 @@
 </head>
 
 <body>
+<script>
+    window.onload = initialize();
+    function initialize() {
+        $.ajax({
+            url: 'HttpServlet',
+            type: 'POST',
+            success: function(data){
+                $.each(data, function(i, name) {
+                    alert("key: " + i + ", value: " + name);
+                });
+            },
+            error: function(xhr, status, error) {
+                alert("An AJAX error occurred: " + status + "\nError: " + error);
+            }
+        });
+    }
+</script>
+
 <!--Start Navbar-->
 <nav class="navbar calcite-navbar navbar-fixed-top calcite-text-light calcite-bg-dark">
     <!--Data Sources-->

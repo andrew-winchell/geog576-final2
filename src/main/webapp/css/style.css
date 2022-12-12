@@ -64,7 +64,7 @@ html, body {
     'query main main main main'
     'query main main main main';
     grid-template-columns: 20vw 20vw 20vw 20vw 20vw;
-    grid-gap: 0px;
+    grid-gap: 0;
     height: 100vh;
     padding-top: 50px;
 }
