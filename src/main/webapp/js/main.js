@@ -408,24 +408,20 @@ require([
         evt.preventDefault();
 
         //parse lat,long from the form
-        let location = $("#weather-loc").val().split(", ")
-
-        let longitude = location[0];
-        let latitude = location[1];
+        let location = $("#weather-loc").val()
 
         let w = $("#weather-form").serializeArray();
+        w.push({name: "weather-loc", value: location})
         w.push({name: "tab_id", value: "0"});
         w = w.filter((item) => {
             return item.value != ''
         });
-        w.push({name: "latitude", value: latitude});
-        w.push({name: "longitude", value: longitude})
+        console.log(w);
         $.ajax({
             url: 'HttpServlet',
             type: 'POST',
             data: w,
             success: () => {
-                console.log("Success");
                 alert("The weather event was created!");
                 //Reset form
                 clearForms();

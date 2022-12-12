@@ -32,12 +32,16 @@
 
       // 1. create weather event
       int contact_id = 0;
-      String system_name = request.getParameter("system_name");
-      String event_date = request.getParameter("event_date");
-      String type = request.getParameter("type");
-      String lat = request.getParameter("latitude");
-      String lon = request.getParameter("longitude");
-      String submitter = request.getParameter("submitter");
+      String system_name = request.getParameter("system-name");
+      String event_date = request.getParameter("weather-date");
+      String type = request.getParameter("disaster-type");
+      String location = request.getParameter("weather-loc");
+      String[] coords = location.split(", ", 2);
+      String lon = coords[0];
+      String lat = coords[1];
+      String submitter = request.getParameter("weather-submitter");
+      System.out.println("WHAT IS GOING ON");
+
       if (system_name != null) {
         system_name = "'" + system_name + "'";
       }
@@ -53,9 +57,9 @@
       if (system_name != null && submitter != null) {
         // create the event
         sql = "insert into weather_event (system_name, event_date, type, location, submitter) " +
-                "values (" + system_name + "," + event_date + "," + type +
-                " ST_GeomFromText('POINT(" + lon + " " + lat + ")', 4326)" +
-                submitter + ")";
+                "values (" + system_name + "," + event_date + "," + type
+                + ", ST_GeomFromText('POINT(" + lon + " " + lat + ")', 4326)" + ","
+                + submitter + ")";
         dbutil.modifyDB(sql);
 
         System.out.println("Success! Event created.");

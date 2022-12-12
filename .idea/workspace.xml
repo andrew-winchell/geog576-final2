@@ -11,7 +11,13 @@
   <component name="ChangeListManager">
     <list default="true" id="f003fde1-6c59-49eb-89cc-61f96e631a95" name="Changes" comment="web app setup">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/webapp/index.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/index.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/org/webproject/geog576final/HttpServlet.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/org/webproject/geog576final/HttpServlet.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/RunQuery.jsp" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/RunQuery.jsp" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/js/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/js/main.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/lib/java-json.jar" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/java-json.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/lib/postgis-jdbc-2021.1.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/postgis-jdbc-2021.1.0.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/lib/postgresql-42.5.0.jar" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/WEB-INF/lib/postgresql-42.5.0.jar" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/webapp/lib/tab.js" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/webapp/lib/tab.js" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -58,7 +64,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/winch/OneDrive/Documents/Masters/576/Final/Project/geog576-final/src/main/webapp/lib/postgresql-42.5.0.jar",
+    "last_opened_file_path": "C:/Users/winch/OneDrive/Documents/Masters/576/Final/Project/geog576-final/src/main/webapp/WEB-INF/lib/postgresql-42.5.0.jar",
     "list.type.of.created.stylesheet": "CSS",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Modules",
@@ -80,6 +86,7 @@
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="C:\Users\winch\OneDrive\Documents\Masters\576\Final\Project\geog576-final\src\main\webapp\lib" />
+      <recent name="C:\Users\winch\OneDrive\Documents\Masters\576\Final\Project\geog576-final\src\main\webapp\WEB-INF" />
       <recent name="C:\Users\winch\OneDrive\Documents\Masters\576\Final\Project\geog576-final\src\main\webapp\img" />
       <recent name="C:\Users\winch\OneDrive\Documents\Masters\576\Final\Project\geog576-final\src\main\webapp" />
     </key>
@@ -152,7 +159,8 @@
       <updated>1670302820091</updated>
       <workItem from="1670302821389" duration="71728000" />
       <workItem from="1670729722736" duration="14233000" />
-      <workItem from="1670806078822" duration="6354000" />
+      <workItem from="1670806078822" duration="7690000" />
+      <workItem from="1670813952848" duration="7120000" />
     </task>
     <task id="LOCAL-00001" summary="web app setup">
       <created>1670794830420</created>
@@ -175,7 +183,14 @@
       <option name="project" value="LOCAL" />
       <updated>1670811992064</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="web app setup">
+      <created>1670812664491</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1670812664491</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

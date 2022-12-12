@@ -64,24 +64,28 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
 
         // 1. create weather event
         int contact_id = 0;
-        String system_name = request.getParameter("system_name");
-        String event_date = request.getParameter("event_date");
-        String type = request.getParameter("type");
-        String location = request.getParameter("location");
-        String submitter = request.getParameter("submitter");
+        String system_name = request.getParameter("system-name");
+        String event_date = request.getParameter("weather-date");
+        String type = request.getParameter("disaster-type");
+        String location = request.getParameter("weather-loc");
+        String[] coords = location.split(", ",2);
+        String loc = coords[0] + " " + coords[1];
+        String locGeom = "ST_GeomFromText('POINT(" + loc + ")', 4326)";
+        String submitter = request.getParameter("weather-submitter");
         if (system_name != null) {system_name = "'" + system_name + "'";}
         if (event_date != null) {event_date = "'" + event_date + "'";}
         if (type != null) {type = "'" + type + "'";}
-        if (location != null) {location = "'" + location + "'";}
+        if (loc != null) {loc = "'" + loc + "'";}
         if (submitter != null) {submitter = "'" + submitter + "'";}
-        // create the event
-        sql = "insert into weather_event (system_name, event_date, type, location, submitter) " +
-                "values (" + system_name + "," + event_date + "," + type + ","
-                + location + "," + submitter + ")";
-        dbutil.modifyDB(sql);
-        System.out.println("Success! Contact created.");
-
-        dbutil.modifyDB(sql);
+        if (submitter != null) {
+            // create the event
+            sql = "insert into weather_event (system_name, event_date, type, location, submitter) " +
+                    "values (" + system_name + "," + event_date + "," + type +
+                    ", " + locGeom + "," +
+                    submitter + ")";
+            dbutil.modifyDB(sql);
+            System.out.println("Success! Weather Event created.");
+        }
 
         // response that the report submission is successful
         JSONObject data = new JSONObject();
