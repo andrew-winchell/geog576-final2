@@ -245,6 +245,12 @@ require([
         });
         view.graphics.add(graphic);
         console.log(graphic);
+        addPolygonGeom(graphic.geometry.rings)
+    }
+
+    function addPolygonGeom(rings) {
+        $("#iwa-loc").val(rings);
+        $("#iwa-submit-btn").prop("disabled", false);
     }
 
     //on start-up, populate weather events dropdown
@@ -279,7 +285,7 @@ require([
     //listen for the selection on the weather event dropdown
     $("#weather-dropdown").on("calciteSelectChange", (e) => {
             //call the populateDropdown function with the iwa option
-            populateDropdown("iwa");
+            populateDropdown("iwa", e.target.value);
             //send the selected weather event to the eventSelected function
             eventSelected(e.target.value);
         }
@@ -299,20 +305,52 @@ require([
             //clear weather dropdown options except for the default
             $("#weather-dropdown calcite-option:not(:first)").remove();
 
-            //append each of the existing weather events as a new option
-            $("#weather-default").after(
-                '<calcite-option>New Event</calcite-option>' +
-                '<calcite-option>Test Event</calcite-option>'
-            );
+            //query database for weather events
+            let e = [];
+            e.push({name: "tab_id", value: "1"})
+            $.ajax({
+                url: 'HttpServlet',
+                type: 'POST',
+                data: e,
+                success: (events) => {
+                    events.reverse();
+                    for (const e in events) {
+                        $("#weather-default").after(
+                            '<calcite-option>' + events[e] + '</calcite-option>'
+                        );
+                    };
+                },
+                error: (xhr, status, error) => {
+                    alert("Status: " + status + "\nError: " + error);
+                }
+            });
+
         } else if (dropdown == "iwa") {
             //clear iwa dropdown options except for the default
             $("#iwa-dropdown calcite-option:not(:first)").remove();
 
-            //append each of the existing iwa's for the selected weather event
-            $("#iwa-default").after(
-                '<calcite-option>New IWA</calcite-option>' +
-                '<calcite-option>Test IWA</calcite-option>'
-            )
+            //query database for iwa's in the selected weather event
+            let e = [];
+            e.push({name: "tab_id", value: "3"})
+            e.push({name: "event_name", value: event})
+            console.log(event)
+            $.ajax({
+                url: 'HttpServlet',
+                type: 'POST',
+                data: e,
+                success: (iwas) => {
+                    iwas.reverse();
+                    for (const i in iwas) {
+                        $("#iwa-default").after(
+                            '<calcite-option>' + iwas[i] + '</calcite-option>'
+                        );
+                    };
+                    console.log(iwas);
+                },
+                error: (xhr, status, error) => {
+                    alert("Status: " + status + "\nError: " + error);
+                }
+            });
         };
     }
 
@@ -338,6 +376,8 @@ require([
         }
         //This indicates that an existing weather event has been selected
         else {
+            //make sure all forms are cleared of any information
+            clearForms("event");
             //Enable Step 2. IWA tab
             $("#iwa-list-item").removeClass("disabled");
             //hide the point button as it will not be used passed Step 1. Weather Event
@@ -346,7 +386,7 @@ require([
             $("#iwa-tab").tab("show");
             //add a header to the IWA panel indicating the selected weather event
             $("#iwa").prepend(
-                "<p id='event-label'>Weather Event: " + selection + "</p>"
+                "<p id='related-event'>Weather Event: " + selection + "</p>"
             );
             //filter to the selected weather event graphic
             filterWeatherEvent();
@@ -378,7 +418,7 @@ require([
             $("#weather-form").closest('form').find("input[type=text], textarea").val("");
             $("#weather-form").closest('form').find("input[type=date], textarea").val("");
             $("#disaster-type").val("");
-            $("p").remove("#event-label");
+            $("p").remove("#related-event");
         } else if (form == "iwa") {
             $("#iwa-form").closest('form').find("input[type=text], textarea").val("");
             $("#iwa-form").closest('form').find("input[type=date], textarea").val("");
@@ -410,13 +450,10 @@ require([
         //parse lat,long from the form
         let location = $("#weather-loc").val()
 
+        //push values to data array
         let w = $("#weather-form").serializeArray();
         w.push({name: "weather-loc", value: location})
         w.push({name: "tab_id", value: "0"});
-        w = w.filter((item) => {
-            return item.value != ''
-        });
-        console.log(w);
         $.ajax({
             url: 'HttpServlet',
             type: 'POST',
@@ -424,9 +461,49 @@ require([
             success: () => {
                 alert("The weather event was created!");
                 //Reset form
-                clearForms();
+                clearForms("event");
             },
             error: (xhr, status, error) => {
+                alert("Status: " + status + "\nError: " + error);
+            }
+        });
+    }
+    //listen for weather_event form submission
+    $("#iwa-form").on("submit", createIWA);
+
+    function createIWA(evt) {
+        //override the normal form action
+        evt.preventDefault();
+
+        //parse lat,long from the form
+        let location = $("#iwa-loc").val().split(",");
+        let locGeom = [];
+        //join every coordinate pair
+        for (let j=0; j<location.length; j++) {
+            locGeom.push(location[j] + " " + location[(j+1)]);
+            j++;
+        }
+        //add starting point at the end to close the polygon
+        locGeom.push(location.slice(0,2).join(" "))
+        let related_event = $("#weather-dropdown").val();
+
+        //push values to data array
+        let i = $("#iwa-form").serializeArray();
+        i.push({name: "iwa-loc", value: locGeom})
+        i.push({name: "tab_id", value: "2"});
+        i.push({name: "related-event", value: related_event})
+        console.log(i);
+        $.ajax({
+            url: 'HttpServlet',
+            type: 'POST',
+            data: i,
+            success: () => {
+                alert("The IWA was created!");
+                //Reset form
+                clearForms("iwa");
+            },
+            error: (xhr, status, error) => {
+                console.log("js error")
                 alert("Status: " + status + "\nError: " + error);
             }
         });

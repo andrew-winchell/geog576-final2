@@ -116,7 +116,7 @@ html, body {
     margin-bottom: 2vh;
 }
 
-#event-label {
+#related-event {
     font-weight: bold;
     --calcite-select-font-size: 18px;
     font-family: Arial, Helvetica, sans-serif;

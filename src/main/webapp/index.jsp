@@ -133,10 +133,10 @@
                     <div>
                         <label>ID:&nbsp</label><input type="text" placeholder="IWA ID" name="iwa-id" class="form-input" required>
                         <label>Date:&nbsp</label><input type="date" id="iwa-date" name="iwa-date" class="form-input" required>
-                        <label>Location:&nbsp</label><input type="text" id="iwa-loc" name="iwa-loc" class="form-input" required>
+                        <label>Location:&nbsp</label><input type="text" id="iwa-loc" name="iwa-loc" class="form-input" disabled required>
                         <label>Submitter:&nbsp</label><input type="text" placeholder="Your Name" id="iwa-submitter" name="iwa-submitter" class="form-input" required>
                     </div>
-                    <button type="submit" class="btn btn-default" id="iwa-submit-btn">
+                    <button type="submit" class="btn btn-default" id="iwa-submit-btn" disabled>
                         <span class="glyphicon glyphicon-plus"></span> Draw IWA
                     </button>
                 </form>
