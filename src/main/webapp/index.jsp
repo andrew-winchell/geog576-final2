@@ -25,23 +25,6 @@
 </head>
 
 <body>
-<script>
-    window.onload = initialize();
-    function initialize() {
-        $.ajax({
-            url: 'HttpServlet',
-            type: 'POST',
-            success: function(data){
-                $.each(data, function(i, name) {
-                    alert("key: " + i + ", value: " + name);
-                });
-            },
-            error: function(xhr, status, error) {
-                alert("An AJAX error occurred: " + status + "\nError: " + error);
-            }
-        });
-    }
-</script>
 
 <!--Start Navbar-->
 <nav class="navbar calcite-navbar navbar-fixed-top calcite-text-light calcite-bg-dark">
