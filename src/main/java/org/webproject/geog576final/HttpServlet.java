@@ -101,6 +101,7 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
         // get event features
         else if (tab_id.equals("6")) {
             try {
+                System.out.println(sqlWhere);
                 iwaFeatures(request, response, sqlWhere);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -286,6 +287,7 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
             String iwa_date = res.getString("iwa_date");
             String submitter = res.getString("submitter");
             String geom = res.getString("rings");
+            System.out.println(geom);
             String[] row = {event_name, iwa_id, iwa_date, submitter, geom};
             list.put(row);
         }

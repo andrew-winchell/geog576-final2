@@ -207,15 +207,19 @@ require([
             }
         });
         view.graphics.add(graphic);
-        for (let i=0; i<graphic.geometry.rings.length; i++){
-            for (let j=0; j<i<graphic.geometry.rings[i].length; j++) {
-                console.log(graphic.geometry.rings[i][j])
+        let rings = [];
+        for (let i=0; i<graphic.geometry.rings.length; i++) {
+            let innerRing = [];
+            for (let j = 0; j < graphic.geometry.rings[i].length; j++) {
+                let coords = graphic.geometry.rings[i][j];
+                let x_coord = coords[0]
+                let y_coord = coords[1]
+                let latLong = webMercatorUtils.xyToLngLat(x_coord, y_coord)
+                innerRing.push(latLong)
             }
-            //var geom = webMercatorUtils.xyToLngLat(graphic.geometry.rings[i])
-            //console.log(graphic.geometry.rings[i][i])
-            //console.log(graphic.geometry.rings)
+            rings.push(innerRing)
         }
-        addPolygonGeom(graphic.geometry.rings)
+        addPolygonGeom(rings)
     }
 
     function addPolygonGeom(rings) {
@@ -601,20 +605,24 @@ require([
     }
 
     function convertIWAsToGeoJSON(dataset) {
-        let rings = dataset[0][4].slice(9,-2).split(",");
         const geojson = {
             type: "FeatureCollection",
             features: []
         }
         for (let i=0; i <dataset.length; i++) {
+            let rings = dataset[i][4].slice(9,-2).split(",");
+            let ring = []
+            rings.forEach((r) => {
+                let newR = r.split(" ");
+                ring.push(newR);
+                console.log(newR)
+            })
             const feature = {
                 type: "Feature",
                 id: i+1,
                 geometry: {
                     type: "Polygon",
-                    coordinates: [
-                        rings
-                    ]
+                    coordinates: ring,
                 },
                 properties: {
                     SYSTEM_NAME: dataset[i][2],
@@ -778,7 +786,7 @@ require([
 
             const iwaLayer = new GeoJSONLayer({
                 url: url,
-                id: "events"
+                id: "iwa"
             });
 
             //symbol style for iwa layer
