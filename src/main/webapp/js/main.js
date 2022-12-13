@@ -2,11 +2,12 @@ require([
     //ArcGIS JS API
     "esri/config",
     "esri/Map",
-    "esri/layers/FeatureLayer",
+    "esri/layers/GeoJSONLayer",
     "esri/views/MapView",
     "esri/views/draw/Draw",
     "esri/Graphic",
     "esri/geometry/geometryEngine",
+    "esri/geometry/support/webMercatorUtils",
     //"esri/symbols/WebStyleSymbol",
     //"esri/smartMapping/renderers/location",
 
@@ -27,54 +28,15 @@ require([
     //Dojo
     "dojo/domReady!"
 
-], function(esriConfig, Map, FeatureLayer, MapView, Draw, Graphic, geometryEngine, Home, Search, Collapse, Dropdown, CalciteMaps, CalciteMapArcGISSupport){
+], function(esriConfig, Map, GeoJSONLayer, MapView, Draw, Graphic, geometryEngine, webMercatorUtils, Home, Search, Collapse, Dropdown, CalciteMaps, CalciteMapArcGISSupport){
 
     //esri agol api key
     esriConfig.apiKey = "AAPK81762376d6974634a978fa72c12fdfbdqcwchnbMurlNeJgk4ov0WxRZLEi9rayVxvBJeTGwyKw9Vy2_Azi6YAtY1QAlpkkm";
-
-    //weather events layer
-    const eventLayer = new FeatureLayer({
-        id: "weather_events",
-        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/SITREP_DATA/FeatureServer/0"
-    });
-
-    //symbol style for events layer
-    let eventSymbol = {
-        type: "simple-marker",
-        color: "red",
-        size: 4
-    };
-
-    //apply eventSymbol style to eventLayer
-    eventLayer.renderer = {
-        type: "simple",
-        symbol: eventSymbol
-    };
-
-    //static facilities layer
-    const facilityLayer = new FeatureLayer({
-        id: "facilities",
-        url: "https://services.arcgis.com/HRPe58bUyBqyyiCt/arcgis/rest/services/SITREP_DATA/FeatureServer/1"
-    });
-
-    //symbol style for facility layer
-    let facilitySymbol = {
-        type: "simple-marker",
-        color: "green",
-        size: 5
-    };
-
-    //apply facilitySymbol style to facilityLayer
-    facilityLayer.renderer = {
-        type: "simple",
-        symbol: facilitySymbol
-    };
 
     //construct a new web map using basic topographic basemap
     //add weather event and facility layers by default
     const map = new Map({
         basemap: "topo-vector",
-        layers: [eventLayer, facilityLayer]
     });
 
     //construct new map view
@@ -171,6 +133,7 @@ require([
             }
         });
         view.graphics.add(graphic);
+        console.log(graphic.geometry)
 
         addPointGeom(graphic.geometry.longitude, graphic.geometry.latitude);
     }
@@ -244,7 +207,14 @@ require([
             }
         });
         view.graphics.add(graphic);
-        console.log(graphic);
+        for (let i=0; i<graphic.geometry.rings.length; i++){
+            for (let j=0; j<i<graphic.geometry.rings[i].length; j++) {
+                console.log(graphic.geometry.rings[i][j])
+            }
+            //var geom = webMercatorUtils.xyToLngLat(graphic.geometry.rings[i])
+            //console.log(graphic.geometry.rings[i][i])
+            //console.log(graphic.geometry.rings)
+        }
         addPolygonGeom(graphic.geometry.rings)
     }
 
@@ -257,6 +227,7 @@ require([
     $(document).ready(() => {
         populateDropdown("event");
         tabContentResize();
+        getWeatherEvents();
     });
 
     //on window resize, call the function to resize the tab contents
@@ -288,6 +259,7 @@ require([
             populateDropdown("iwa", e.target.value);
             //send the selected weather event to the eventSelected function
             eventSelected(e.target.value);
+            getWeatherEvents(e.target.value);
         }
     );
 
@@ -313,12 +285,16 @@ require([
                 type: 'POST',
                 data: e,
                 success: (events) => {
-                    events.reverse();
-                    for (const e in events) {
+                    let evt = events.reverse();
+                    for (const e in evt) {
                         $("#weather-default").after(
-                            '<calcite-option>' + events[e] + '</calcite-option>'
+                            '<calcite-option>' + evt[e] + '</calcite-option>'
                         );
                     };
+
+                    $("#weather-default").after(
+                        '<calcite-option>New Event</calcite-option>'
+                    );
                 },
                 error: (xhr, status, error) => {
                     alert("Status: " + status + "\nError: " + error);
@@ -333,7 +309,6 @@ require([
             let e = [];
             e.push({name: "tab_id", value: "3"})
             e.push({name: "event_name", value: event})
-            console.log(event)
             $.ajax({
                 url: 'HttpServlet',
                 type: 'POST',
@@ -345,7 +320,9 @@ require([
                             '<calcite-option>' + iwas[i] + '</calcite-option>'
                         );
                     };
-                    console.log(iwas);
+                    $("#iwa-default").after(
+                        '<calcite-option>New IWA</calcite-option>'
+                    );
                 },
                 error: (xhr, status, error) => {
                     alert("Status: " + status + "\nError: " + error);
@@ -388,8 +365,7 @@ require([
             $("#iwa").prepend(
                 "<p id='related-event'>Weather Event: " + selection + "</p>"
             );
-            //filter to the selected weather event graphic
-            filterWeatherEvent();
+            getIWAs(selection);
         };
     }
 
@@ -408,8 +384,6 @@ require([
             $("#report-list-item").removeClass("disabled");
             $("#report-tab").tab("show");
             $("#polygon-button").css("display", "none");
-            //filter to the selected iwa graphic
-            filterIWA();
         }
     };
 
@@ -424,20 +398,6 @@ require([
             $("#iwa-form").closest('form').find("input[type=date], textarea").val("");
 
         };
-    }
-
-    //show only the selected weather event
-    function filterWeatherEvent() {
-        //remove any existing weather event drawings
-        view.graphics.removeAll();
-        //filter weather event layer to the selected event
-    }
-
-    //show only the selected weather event
-    function filterIWA() {
-        //remove any existing iwa drawings
-        view.graphics.removeAll();
-        //filter wia layer to the selected area
     }
 
     //listen for weather_event form submission
@@ -459,14 +419,15 @@ require([
             type: 'POST',
             data: w,
             success: () => {
-                alert("The weather event was created!");
-                //Reset form
+                //remove any existing iwa drawings
+                view.graphics.removeAll();
                 clearForms("event");
             },
             error: (xhr, status, error) => {
                 alert("Status: " + status + "\nError: " + error);
             }
         });
+        populateDropdown("event");
     }
     //listen for weather_event form submission
     $("#iwa-form").on("submit", createIWA);
@@ -492,13 +453,13 @@ require([
         i.push({name: "iwa-loc", value: locGeom})
         i.push({name: "tab_id", value: "2"});
         i.push({name: "related-event", value: related_event})
-        console.log(i);
         $.ajax({
             url: 'HttpServlet',
             type: 'POST',
             data: i,
             success: () => {
-                alert("The IWA was created!");
+                //remove any existing iwa drawings
+                view.graphics.removeAll();
                 //Reset form
                 clearForms("iwa");
             },
@@ -507,5 +468,337 @@ require([
                 alert("Status: " + status + "\nError: " + error);
             }
         });
+        populateDropdown("iwa", related_event);
+
+        let iwa_val = i[5].value + "-" + i[0].value;
+        $("#iwa_dropdown select").val(iwa_val).change();
+    }
+
+    function getFacilities() {
+        let f = [{name: "tab_id", value: "4"}];
+        f.push()
+        $.ajax({
+            url: 'HttpServlet',
+            type: 'POST',
+            data: f,
+            success: (list) => {
+                convertFacilityToGeoJSON(list);
+            },
+            error: (xhr, status, error) => {
+                console.log("js error")
+                alert("Status: " + status + "\nError: " + error);
+            }
+        });
+    }
+
+    function getWeatherEvents(event) {
+        if (event == "New Event" || event == "Select Weather Event" || event == undefined){
+            event = "1=1";
+        } else {
+            event = "system_name = '" + event + "'";
+        }
+        let we = [
+            {name: "tab_id", value: "5"},
+            {name: "event", value: event}];
+        we.push()
+        $.ajax({
+            url: 'HttpServlet',
+            type: 'POST',
+            data: we,
+            success: (list) => {
+                convertEventsToGeoJSON(list);
+            },
+            error: (xhr, status, error) => {
+                console.log("js error")
+                alert("Status: " + status + "\nError: " + error);
+            }
+        });
+    }
+
+    function getIWAs(event) {
+        event = "event_name='" + event + "'";
+        let we = [
+            {name: "tab_id", value: "6"},
+            {name: "event", value: event}];
+        we.push()
+        $.ajax({
+            url: 'HttpServlet',
+            type: 'POST',
+            data: we,
+            success: (list) => {
+                convertIWAsToGeoJSON(list);
+            },
+            error: (xhr, status, error) => {
+                console.log("js error")
+                alert("Status: " + status + "\nError: " + error);
+            }
+        });
+    }
+
+    function convertFacilityToGeoJSON(dataset) {
+        const geojson = {
+            type: "FeatureCollection",
+            features: []
+        }
+        for (let i=0; i <dataset.length; i++) {
+            const feature = {
+                type: "Feature",
+                id: i+1,
+                geometry: {
+                    type: "Point",
+                    coordinates: [
+                        dataset[i][0], dataset[i][1]
+                    ]
+                },
+                properties: {
+                    ARPT_ID: dataset[i][2],
+                    ARPT_NAME: dataset[i][3],
+                    CITY: dataset[i][4],
+                    STATE_CODE: dataset[i][5],
+                    COUNTY_NAME: dataset[i][6],
+                    ELEVATION: dataset[i][7],
+                    ARTCC: dataset[i][8],
+                    SINGLE_ENG: dataset[i][9],
+                    MULTI_ENG: dataset[i][10],
+                    JET_ENG: dataset[i][11],
+                    HELI: dataset[i][12],
+                    MILITARY_ACFT: dataset[i][13],
+                    COMMERCIAL_OPS: dataset[i][14],
+                    LOCAL_OPS: dataset[i][15],
+                    MILITARY_OPS: dataset[i][16]
+                }
+            }
+            geojson.features.push(feature);
+        }
+        plotFeatures(geojson, "0");
+    }
+
+    function convertEventsToGeoJSON(dataset) {
+        const geojson = {
+            type: "FeatureCollection",
+            features: []
+        }
+        for (let i=0; i <dataset.length; i++) {
+            const feature = {
+                type: "Feature",
+                id: i+1,
+                geometry: {
+                    type: "Point",
+                    coordinates: [
+                        dataset[i][0], dataset[i][1]
+                    ]
+                },
+                properties: {
+                    SYSTEM_NAME: dataset[i][2],
+                    EVENT_DATE: dataset[i][3],
+                    TYPE: dataset[i][4],
+                    SUBMITTER: dataset[i][4],
+                }
+            }
+            geojson.features.push(feature);
+        }
+        plotFeatures(geojson, "1");
+    }
+
+    function convertIWAsToGeoJSON(dataset) {
+        let rings = dataset[0][4].slice(9,-2).split(",");
+        const geojson = {
+            type: "FeatureCollection",
+            features: []
+        }
+        for (let i=0; i <dataset.length; i++) {
+            const feature = {
+                type: "Feature",
+                id: i+1,
+                geometry: {
+                    type: "Polygon",
+                    coordinates: [
+                        rings
+                    ]
+                },
+                properties: {
+                    SYSTEM_NAME: dataset[i][2],
+                    EVENT_DATE: dataset[i][3],
+                    TYPE: dataset[i][4],
+                    SUBMITTER: dataset[i][4],
+                }
+            }
+            geojson.features.push(feature);
+        }
+        plotFeatures(geojson, "2");
+    }
+
+    function plotFeatures(template, layer) {
+        if (layer == "0"){
+
+            // create a new blob from geojson featurecollection
+            const blob = new Blob([JSON.stringify(template)], {
+                type: "application/json"
+            });
+
+            // URL reference to the blob
+            const url = URL.createObjectURL(blob);
+
+            const facilityLayer = new GeoJSONLayer({
+                url: url
+            });
+
+            //symbol style for facility layer
+            let facilitySymbol = {
+                type: "simple-marker",
+                color: "green",
+                size: 5
+            };
+
+            //apply facilitySymbol style to facilityLayer
+            facilityLayer.renderer = {
+                type: "simple",
+                symbol: facilitySymbol
+            };
+
+            map.add(facilityLayer);
+        }
+        else if (layer == "1"){
+            //check if an existing events layer is already on the map
+            for (let m=0; m<map.layers.items.length; m++) {
+                //if yes, remove it
+                if (map.layers.items[m].id == "events") {
+                    map.remove(map.layers.items[m])
+                }
+            }
+
+            // create a new blob from geojson featurecollection
+            const blob = new Blob([JSON.stringify(template)], {
+                type: "application/json"
+            });
+
+            // URL reference to the blob
+            const url = URL.createObjectURL(blob);
+
+            //apply facilitySymbol style to facilityLayer
+            const eventRenderer = {
+                type: "unique-value",
+                defaultSymbol: {
+                    type: "picture-marker",
+                    url: "img/dmg_marker.png",
+                    width: "20px",
+                    height: "20px"
+                },
+                defaultLabel: "Other",
+                field: "type",
+
+                uniqueValueInfos: [
+                    {
+                        value: "blizzard",
+                        symbol: {
+                            type: "picture-marker",
+                            url: "img/blizzard.png",
+                            width: "20px",
+                            height: "20px"
+                        },
+                        label: "Blizzard"
+                    },
+                    {
+                        value: "earthquake",
+                        symbol: {
+                            type: "picture-marker",
+                            url: "img/earthquake.png",
+                            width: "20px",
+                            height: "20px"
+                        },
+                        label: "Earthquake"
+                    },
+                    {
+                        value: "flood",
+                        symbol: {
+                            type: "picture-marker",
+                            url: "img/flood.png",
+                            width: "20px",
+                            height: "20px"
+                        },
+                        label: "Flood"
+                    },
+                    {
+                        value: "hurricane",
+                        symbol: {
+                            type: "picture-marker",
+                            url: "img/hurricane.png",
+                            width: "20px",
+                            height: "20px"
+                        },
+                        label: "Hurricane"
+                    },
+                    {
+                        value: "tornado",
+                        symbol: {
+                            type: "picture-marker",
+                            url: "img/tornado.png",
+                            width: "20px",
+                            height: "20px"
+                        },
+                        label: "Tornado"
+                    },
+                    {
+                        value: "wildfire",
+                        symbol: {
+                            type: "picture-marker",
+                            url: "img/wildfire.png",
+                            width: "20px",
+                            height: "20px"
+                        },
+                        label: "Wildfire"
+                    }
+                ]
+            };
+
+            const eventLayer = new GeoJSONLayer({
+                url: url,
+                id: "events",
+                renderer: eventRenderer
+            });
+
+            map.add(eventLayer);
+        }
+        else if (layer == "2"){
+            //check if an existing events layer is already on the map
+            for (let m=0; m<map.layers.items.length; m++) {
+                //if yes, remove it
+                if (map.layers.items[m].id == "iwas") {
+                    map.remove(map.layers.items[m])
+                }
+            }
+
+            // create a new blob from geojson featurecollection
+            const blob = new Blob([JSON.stringify(template)], {
+                type: "application/json"
+            });
+
+            // URL reference to the blob
+            const url = URL.createObjectURL(blob);
+
+            const iwaLayer = new GeoJSONLayer({
+                url: url,
+                id: "events"
+            });
+
+            //symbol style for iwa layer
+            let iwaSymbol = {
+                type: "simple-fill",
+                color: "red",
+                style: "none",
+                outline: {
+                    color: "red",
+                    width: 1.5
+                }
+            };
+
+            //apply facilitySymbol style to facilityLayer
+            iwaLayer.renderer = {
+                type: "simple",
+                symbol: iwaSymbol
+            };
+
+            map.add(iwaLayer);
+        }
     }
 });

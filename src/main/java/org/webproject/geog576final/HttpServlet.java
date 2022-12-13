@@ -44,6 +44,7 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
 
         String tab_id = request.getParameter("tab_id");
         String event = request.getParameter("event_name");
+        String sqlWhere = request.getParameter("event");
 
         // create weather event
         if (tab_id.equals("0")) {
@@ -81,6 +82,30 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
                 e.printStackTrace();
             }
         }
+        // get facility features
+        else if (tab_id.equals("4")) {
+            try {
+                facilityFeatures(request, response);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        // get event features
+        else if (tab_id.equals("5")) {
+            try {
+                eventFeatures(request, response, sqlWhere);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        // get event features
+        else if (tab_id.equals("6")) {
+            try {
+                iwaFeatures(request, response, sqlWhere);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     private void createEvent(HttpServletRequest request, HttpServletResponse
@@ -107,7 +132,6 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
             sql = "insert into weather_event (system_name, event_date, type, location, submitter) " +
                     "values (" + system_name + ", " + event_date + ", " + type +
                     ", " + locGeom + ", " + submitter + ");";
-            System.out.println(sql);
             dbutil.modifyDB(sql);
             System.out.println("Success! Weather Event created.");
         }
@@ -156,7 +180,6 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
             sql = "insert into iwa (event_name, iwa_date, iwa_id, location, submitter) " +
                     "values (" + related_event + "," + iwa_date + "," + iwa_id +
                     ", " + iwaGeom + "," + iwa_submitter + ")";
-            System.out.println(sql);
             dbutil.modifyDB(sql);
             System.out.println("Success! IWA created.");
         }
@@ -183,6 +206,88 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
             String id = res.getString("iwa_id");
             String m = sys + "-" + id;
             list.put(m);
+        }
+        response.getWriter().write(list.toString());
+    }
+
+    private void facilityFeatures(HttpServletRequest request, HttpServletResponse
+            response) throws SQLException, IOException {
+        JSONArray list = new JSONArray();
+        DBUtility dbutil = new DBUtility();
+        String sql = "SELECT * FROM facility";
+        ResultSet res = dbutil.queryDB(sql);
+        while (res.next()) {
+            String arpt_id = res.getString("arpt_id");
+            String arpt_name = res.getString("arpt_name");
+            String city = res.getString("city");
+            String state_code = res.getString("state_code");
+            String county_name = res.getString("county_name");
+            String lat = res.getString("lat");
+            String lon = res.getString("long");
+            String elevation = res.getString("elevation");
+            String artcc = res.getString("artcc");
+            String single_eng = res.getString("single_eng");
+            String multi_eng = res.getString("multi_eng");
+            String jet_eng = res.getString("jet_eng");
+            String heli = res.getString("heli");
+            String military_acft = res.getString("military_acft");
+            String commerc_ops = res.getString("commerc_ops");
+            String local_ops = res.getString("local_ops");
+            String military_ops = res.getString("military_ops");
+            String geom = res.getString("geom");
+            String[] row = {lon, lat, arpt_id, arpt_name, city, state_code, county_name, elevation, artcc, single_eng, multi_eng, jet_eng, heli, military_acft, commerc_ops, local_ops, military_ops, geom};
+            list.put(row);
+        }
+        response.getWriter().write(list.toString());
+    }
+
+    private void eventFeatures(HttpServletRequest request, HttpServletResponse
+            response, String sqlWhere) throws SQLException, IOException {
+        JSONArray list = new JSONArray();
+        DBUtility dbutil = new DBUtility();
+        String sql = "SELECT ST_X (ST_Transform (location, 4326)) AS long,\n" +
+                "ST_Y (ST_Transform (location, 4326)) AS lat,\n" +
+                "system_name,\n" +
+                "event_date,\n" +
+                "type,\n" +
+                "submitter\n" +
+                "FROM weather_event\n" +
+                "WHERE " + sqlWhere;
+        ResultSet res = dbutil.queryDB(sql);
+        while (res.next()) {
+            String lon = res.getString("long");
+            String lat = res.getString("lat");
+            String system_name = res.getString("system_name");
+            String event_date = res.getString("event_date");
+            String type = res.getString("type");
+            String submitter = res.getString("submitter");
+            String[] row = {lon, lat, system_name, event_date, type, submitter};
+            list.put(row);
+        }
+        response.getWriter().write(list.toString());
+    }
+
+    private void iwaFeatures(HttpServletRequest request, HttpServletResponse
+            response, String sqlWhere) throws SQLException, IOException {
+        JSONArray list = new JSONArray();
+        DBUtility dbutil = new DBUtility();
+        String sql = "SELECT ST_AsText(ST_PolyFromWKB(iwa.location,4326)) AS rings,\n" +
+                "event_name,\n" +
+                "iwa_id,\n" +
+                "iwa_date,\n" +
+                "location\n," +
+                "submitter\n" +
+                "FROM iwa\n" +
+                "WHERE " + sqlWhere;
+        ResultSet res = dbutil.queryDB(sql);
+        while (res.next()) {
+            String event_name = res.getString("event_name");
+            String iwa_id = res.getString("iwa_id");
+            String iwa_date = res.getString("iwa_date");
+            String submitter = res.getString("submitter");
+            String geom = res.getString("rings");
+            String[] row = {event_name, iwa_id, iwa_date, submitter, geom};
+            list.put(row);
         }
         response.getWriter().write(list.toString());
     }
