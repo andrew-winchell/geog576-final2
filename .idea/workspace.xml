@@ -10,7 +10,6 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f003fde1-6c59-49eb-89cc-61f96e631a95" name="Changes" comment="Generate docx report">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -58,7 +57,7 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "WebServerToolWindowFactoryState": "false",
-    "last_opened_file_path": "C:/Users/winch/Downloads/JSON-java-20220924/JSON-java-20220924/gradle/wrapper/gradle-wrapper.jar",
+    "last_opened_file_path": "C:/Users/winch/Downloads",
     "list.type.of.created.stylesheet": "CSS",
     "nodejs_package_manager_path": "npm",
     "project.structure.last.edited": "Libraries",
@@ -215,7 +214,7 @@
       <workItem from="1670729722736" duration="14233000" />
       <workItem from="1670806078822" duration="7690000" />
       <workItem from="1670813952848" duration="24768000" />
-      <workItem from="1670895116087" duration="52094000" />
+      <workItem from="1670895116087" duration="52493000" />
     </task>
     <task id="LOCAL-00001" summary="web app setup">
       <created>1670794830420</created>
@@ -455,7 +454,21 @@
       <option name="project" value="LOCAL" />
       <updated>1670997287423</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="Generate docx report">
+      <created>1670997853023</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1670997853023</updated>
+    </task>
+    <task id="LOCAL-00036" summary="Generate docx report">
+      <created>1670998054860</created>
+      <option name="number" value="00036" />
+      <option name="presentableId" value="LOCAL-00036" />
+      <option name="project" value="LOCAL" />
+      <updated>1670998054860</updated>
+    </task>
+    <option name="localTasksCounter" value="37" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
