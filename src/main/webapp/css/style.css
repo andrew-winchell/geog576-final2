@@ -133,3 +133,7 @@ form {
 #iwa-submit-btn {
     margin-left: calc(100% - 107.281px);
 }
+
+#gen-button {
+    height: 100px;
+}

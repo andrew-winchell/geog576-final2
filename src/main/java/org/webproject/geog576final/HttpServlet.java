@@ -45,10 +45,10 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
         String tab_id = request.getParameter("tab_id");
         String event = request.getParameter("event_name");
         String sqlWhere = request.getParameter("event");
+        String iwa_id = request.getParameter("iwa_id");
 
         // create weather event
         if (tab_id.equals("0")) {
-            System.out.println("A new weather event has been submitted!");
             try {
                 createEvent(request, response);
             } catch (SQLException e) {
@@ -57,7 +57,6 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
         }
         // query events
         else if (tab_id.equals("1")) {
-            System.out.println("Queried events for dropdown!");
             try {
                 populateEventsDropdown(request, response);
             } catch (SQLException e) {
@@ -66,7 +65,6 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
         }
         // create iwa
         else if (tab_id.equals("2")) {
-            System.out.println("A new IWA has been submitted!");
             try {
                 createIWA(request, response);
             } catch (SQLException e) {
@@ -75,7 +73,6 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
         }
         // populate iwa dropdown
         else if (tab_id.equals("3")) {
-            System.out.println("Queried IWA's for dropdown!");
             try {
                 populateIWADropdown(request, response, event);
             } catch (SQLException e) {
@@ -85,7 +82,7 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
         // get facility features
         else if (tab_id.equals("4")) {
             try {
-                facilityFeatures(request, response);
+                facilityFeatures(request, response, iwa_id);
             } catch (SQLException e) {
                 e.printStackTrace();
             }
@@ -98,10 +95,17 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
                 e.printStackTrace();
             }
         }
-        // get event features
+        // get iwa features
         else if (tab_id.equals("6")) {
             try {
-                System.out.println(sqlWhere);
+                iwaFeatures(request, response, sqlWhere);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+        // get report
+        else if (tab_id.equals("7")) {
+            try {
                 iwaFeatures(request, response, sqlWhere);
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -134,7 +138,6 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
                     "values (" + system_name + ", " + event_date + ", " + type +
                     ", " + locGeom + ", " + submitter + ");";
             dbutil.modifyDB(sql);
-            System.out.println("Success! Weather Event created.");
         }
 
         // response that the report submission is successful
@@ -182,7 +185,6 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
                     "values (" + related_event + "," + iwa_date + "," + iwa_id +
                     ", " + iwaGeom + "," + iwa_submitter + ")";
             dbutil.modifyDB(sql);
-            System.out.println("Success! IWA created.");
         }
 
         // response that the report submission is successful
@@ -212,10 +214,12 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
     }
 
     private void facilityFeatures(HttpServletRequest request, HttpServletResponse
-            response) throws SQLException, IOException {
+            response, String iwa_id) throws SQLException, IOException {
         JSONArray list = new JSONArray();
         DBUtility dbutil = new DBUtility();
-        String sql = "SELECT * FROM facility";
+        String sql = "SELECT *, ST_AsText(iwa.location), ST_AsText(facility.geom)\n" +
+                "FROM iwa, facility\n" +
+                "WHERE iwa_id=" + iwa_id + "AND ST_Contains(iwa.location, facility.geom)";
         ResultSet res = dbutil.queryDB(sql);
         while (res.next()) {
             String arpt_id = res.getString("arpt_id");
@@ -276,7 +280,7 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
                 "event_name,\n" +
                 "iwa_id,\n" +
                 "iwa_date,\n" +
-                "location\n," +
+                "location,\n" +
                 "submitter\n" +
                 "FROM iwa\n" +
                 "WHERE " + sqlWhere;
@@ -287,7 +291,6 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
             String iwa_date = res.getString("iwa_date");
             String submitter = res.getString("submitter");
             String geom = res.getString("rings");
-            System.out.println(geom);
             String[] row = {event_name, iwa_id, iwa_date, submitter, geom};
             list.put(row);
         }

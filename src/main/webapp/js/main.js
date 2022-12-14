@@ -386,8 +386,13 @@ require([
             clearForms("iwa");
         } else {
             $("#report-list-item").removeClass("disabled");
+            $("#gen-button").attr("disabled", false)
             $("#report-tab").tab("show");
             $("#polygon-button").css("display", "none");
+            let evt = selection.split("-")[0];
+            let iwa_id = selection.split("-")[1];
+            getIWAs(evt, iwa_id);
+            getFacilities(iwa_id);
         }
     };
 
@@ -478,8 +483,11 @@ require([
         $("#iwa_dropdown select").val(iwa_val).change();
     }
 
-    function getFacilities() {
-        let f = [{name: "tab_id", value: "4"}];
+    function getFacilities(iwa_id) {
+        let f = [
+            {name: "tab_id", value: "4"},
+            {name: "iwa_id", value: iwa_id}
+        ];
         f.push()
         $.ajax({
             url: 'HttpServlet',
@@ -519,11 +527,18 @@ require([
         });
     }
 
-    function getIWAs(event) {
+    function getIWAs(event, iwa_id) {
+        let sql = "";
         event = "event_name='" + event + "'";
+        if (iwa_id == "New IWA" || iwa_id == "Select IWA" || iwa_id == undefined){
+            sql = event;
+        } else {
+            iwa_id = "iwa_id=" + iwa_id;
+            sql = event + " AND " + iwa_id
+        }
         let we = [
             {name: "tab_id", value: "6"},
-            {name: "event", value: event}];
+            {name: "event", value: sql}];
         we.push()
         $.ajax({
             url: 'HttpServlet',
@@ -611,18 +626,17 @@ require([
         }
         for (let i=0; i <dataset.length; i++) {
             let rings = dataset[i][4].slice(9,-2).split(",");
-            let ring = []
+            let ring = [];
             rings.forEach((r) => {
                 let newR = r.split(" ");
-                ring.push(newR);
-                console.log(newR)
-            })
+                ring.push(newR)
+            });
             const feature = {
                 type: "Feature",
                 id: i+1,
                 geometry: {
                     type: "Polygon",
-                    coordinates: ring,
+                    coordinates: [ring],
                 },
                 properties: {
                     SYSTEM_NAME: dataset[i][2],
@@ -630,7 +644,7 @@ require([
                     TYPE: dataset[i][4],
                     SUBMITTER: dataset[i][4],
                 }
-            }
+            };
             geojson.features.push(feature);
         }
         plotFeatures(geojson, "2");
@@ -655,7 +669,7 @@ require([
             let facilitySymbol = {
                 type: "simple-marker",
                 color: "green",
-                size: 5
+                size: 3
             };
 
             //apply facilitySymbol style to facilityLayer
@@ -786,17 +800,17 @@ require([
 
             const iwaLayer = new GeoJSONLayer({
                 url: url,
-                id: "iwa"
+                id: "iwas"
             });
 
             //symbol style for iwa layer
             let iwaSymbol = {
-                type: "simple-fill",
-                color: "red",
-                style: "none",
-                outline: {
+                type: "simple-fill",  // autocasts as new SimpleFillSymbol()
+                color: [ 255,0, 0, 0.5 ],
+                style: "solid",
+                outline: {  // autocasts as new SimpleLineSymbol()
                     color: "red",
-                    width: 1.5
+                    width: 1
                 }
             };
 
@@ -808,5 +822,53 @@ require([
 
             map.add(iwaLayer);
         }
+    }
+
+    $("#gen-button").on("click", () => {
+        let r = [{
+            name: "tab_id", value: "7"
+        }]
+        $.ajax({
+            url: 'HttpServlet',
+            type: 'POST',
+            data: r,
+            success: (list) => {
+                convertIWAsToGeoJSON(list);
+            },
+            error: (xhr, status, error) => {
+                console.log("js error")
+                alert("Status: " + status + "\nError: " + error);
+            }
+        });
+        console.log("BUTTON WORKS")
+    })
+
+    function Export2Doc(element, filename = ''){
+        var html = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta><title>Export HTML To Doc</title></head><body>";
+        var footer = "</body></html>";
+        var html = html+document.getElementById(element).innerHTML+footer;
+
+
+        //link url
+        var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+
+        //file name
+        filename = filename?filename+'.doc':'document.doc';
+
+        // Creates the  download link element dynamically
+        var downloadLink = document.createElement("a");
+
+        document.body.appendChild(downloadLink);
+
+        //Link to the file
+        downloadLink.href = url;
+
+        //Setting up file name
+        downloadLink.download = filename;
+
+        //triggering the function
+        downloadLink.click();
+        //Remove the a tag after donwload starts.
+        document.body.removeChild(downloadLink);
     }
 });
