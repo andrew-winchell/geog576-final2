@@ -229,7 +229,7 @@ require([
 
     //on start-up, populate weather events dropdown
     $(document).ready(() => {
-        //populateDropdown("event");
+        populateDropdown("event");
         tabContentResize();
         //getWeatherEvents();
     });
