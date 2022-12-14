@@ -8,6 +8,7 @@
     <artifactId>geog576-final</artifactId>
     <version>1.0-SNAPSHOT</version>
     <name>geog576-final</name>
+    <packaging>war</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
