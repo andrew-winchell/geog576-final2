@@ -1,1 +1,1 @@
-web: java $JAVA_OPTS -jar webapp-runner.jar target/geog576-final-1.0-SNAPSHOT.war
+web: java $JAVA_OPTS -jar target/dependency/webapp-runner.jar --port $PORT target/*.war
