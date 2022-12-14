@@ -56,7 +56,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>index.jsp</mainClass>
+                            <mainClass>target/classes/org/JDBC</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
