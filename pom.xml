@@ -55,7 +55,6 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <classpathPrefix>lib/</classpathPrefix>
                             <mainClass>org.webproject.geog576final.DBUtility</mainClass>
                         </manifest>
                     </archive>
