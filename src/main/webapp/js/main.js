@@ -285,7 +285,7 @@ require([
             let e = [];
             e.push({name: "tab_id", value: "1"})
             $.ajax({
-                url: 'HttpServlet',
+                url: 'https://github.com/andrew-winchell/geog576-final2/blob/master/src/main/java/org/webproject/geog576final/HttpServlet.java',
                 type: 'POST',
                 data: e,
                 success: (events) => {
