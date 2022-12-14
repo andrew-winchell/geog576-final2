@@ -285,7 +285,7 @@ require([
             let e = [];
             e.push({name: "tab_id", value: "1"})
             $.ajax({
-                url: 'HttpServlet',
+                url: 'https://geog576-sitrep.herokuapp.com/HttpServlet',
                 type: 'POST',
                 data: e,
                 success: (events) => {
