@@ -17,7 +17,7 @@ import org.json.JSONObject;
 /**
  * Servlet implementation class HttpServlet
  */
-@WebServlet("/HttpServlet")
+@WebServlet(name =  "HttpServlet", urlPatterns = {"/HttpServlet"})
 public class HttpServlet extends jakarta.servlet.http.HttpServlet {
     private static final long serialVersionUID = 1L;
 
