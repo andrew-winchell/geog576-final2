@@ -103,14 +103,6 @@ public class HttpServlet extends jakarta.servlet.http.HttpServlet {
                 e.printStackTrace();
             }
         }
-        // get report
-        else if (tab_id.equals("7")) {
-            try {
-                iwaFeatures(request, response, sqlWhere);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        }
     }
 
     private void createEvent(HttpServletRequest request, HttpServletResponse

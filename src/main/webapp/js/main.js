@@ -825,38 +825,64 @@ require([
     }
 
     $("#gen-button").on("click", () => {
-        let r = [{
-            name: "tab_id", value: "7"
-        }]
+        let iwa = $("#iwa-dropdown").val().split("-")[1];
+        let r = [
+            {name: "tab_id", value: "4"},
+            {name: "iwa_id", value: iwa}
+        ]
         $.ajax({
             url: 'HttpServlet',
             type: 'POST',
             data: r,
             success: (list) => {
-                convertIWAsToGeoJSON(list);
+                Export2Doc(list);
             },
             error: (xhr, status, error) => {
                 console.log("js error")
                 alert("Status: " + status + "\nError: " + error);
             }
         });
-        console.log("BUTTON WORKS")
     })
 
-    function Export2Doc(element, filename = ''){
-        var html = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta><title>Export HTML To Doc</title></head><body>";
-        var footer = "</body></html>";
-        var html = html+document.getElementById(element).innerHTML+footer;
+    function Export2Doc(element){
+        let html = "<html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'><head><meta><title>Report</title></head><body>";
+        html = html + "<h1 style='text-align:center;'>Affected Airports</h1>"
+        for (let i=0; i<element.length; i++) {
+            let p = $("<p></p>").text(element[i]);
+            p = p[0].textContent;
+            let arr = p.split(",");
+            let strFormat = "<p><b>Airport Code: " + arr[2] +
+                "</b></p><p>Airport Name: " + arr[3] +
+                "</p><p>Location: " + arr[0] + ", " + arr[1] +
+                "</p><p>Elevation: " + arr[7] +
+                "</p><p>City: " + arr[4] +
+                " &emsp; State: " + arr[5] +
+                " &emsp; County: " + arr[6] +
+                "</p><p>ARTCC: " + arr[8] +
+                "</p><p>Singe Engine Aircraft: " + arr[9] +
+                " &emsp; Multi Engine Aircraft: " + arr[10] +
+                "</p><p>Jet Engine Aircraft: " + arr[11] +
+                " &emsp; Helicopter: " + arr[12] +
+                "</p><p>Military Aircraft: " + arr[13] +
+                " &emsp; Commercial Operations: " + arr[14] +
+                "</p><p>Local Operations: " + arr[15] +
+                "</p><p>Military Operations: " + arr[16] + "</p>"
+
+            html += strFormat;
+        }
+
+        let footer = "</body></html>";
+        html = html+footer;
 
 
         //link url
-        var url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
+        let url = 'data:application/vnd.ms-word;charset=utf-8,' + encodeURIComponent(html);
 
         //file name
-        filename = filename?filename+'.doc':'document.doc';
+        let filename = 'sitrep-report.doc';
 
         // Creates the  download link element dynamically
-        var downloadLink = document.createElement("a");
+        let downloadLink = document.createElement("a");
 
         document.body.appendChild(downloadLink);
 
