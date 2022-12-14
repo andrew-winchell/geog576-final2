@@ -301,6 +301,7 @@ require([
                     );
                 },
                 error: (xhr, status, error) => {
+                    console.log("failure")
                     alert("Status: " + status + "\nError: " + error);
                 }
             });
