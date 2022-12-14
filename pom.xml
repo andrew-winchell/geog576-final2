@@ -56,7 +56,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>target/classes/org/JDBC.java</mainClass>
+                            <mainClass>classes.org.JDBC</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
